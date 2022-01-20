@@ -10,8 +10,7 @@ var CrypterMeta = (() => {
   const findMetaData = ({ fiddler, metaDataSettings }) => {
     const { keys, visibility } = metaDataSettings
     const sheet = fiddler.getSheet()
-    const spreadsheet = sheet.getParent()
-    return spreadsheet.createDeveloperMetadataFinder()
+    return sheet.createDeveloperMetadataFinder()
       .withKey(keys.encrypted)
       .withVisibility(visibility)
       .withLocationType(SpreadsheetApp.DeveloperMetadataLocationType.COLUMN)
