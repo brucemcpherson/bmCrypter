@@ -53,6 +53,14 @@
  */
 class Crypter {
 
+  /**
+   * get a random string
+   * @returns {string}
+   */
+  static randomString() {
+    return bmSimpleCrypto.GasCrypt.randomString()
+  }
+
   /** 
    * @constructor
    * @param {object} param
@@ -80,12 +88,7 @@ class Crypter {
     return this._metaDataSettings
   }
 
-  /**
-   * get a random string
-   */
-  _randomString() {
-    return bmSimpleCrypto.GasCrypt.randomString()
-  }
+
 
   /**
    * encrypt
@@ -98,7 +101,7 @@ class Crypter {
     const clonable = this._getClonable()
 
     // the public key will be written to the spreadsheet level developer meta data
-    const generatePublicKey = this.settings.clone.generatePublicKey || this._randomString
+    const generatePublicKey = this.settings.clone.generatePublicKey || Crypter.randomString
     const publicKey = generatePublicKey()
 
     // do the cloning
@@ -126,11 +129,11 @@ class Crypter {
     this._tagPublicKey({ publicKey })
 
     // clear the column level data
-    for (const clone of clonable.values()) {
+    for (const item of clonable.values()) {
       // clear the old stuff
-      const { fiddler } = clone
-      this._clearDeveloperData({ fiddler })
-      this._tagMetaData(clone)
+      const { cloneFiddler } = item
+      this._clearDeveloperData({ fiddler: cloneFiddler })
+      this._tagMetaData({fiddler: cloneFiddler,encryptColumns: item.encryptColumns})
     }
 
 
@@ -175,9 +178,11 @@ class Crypter {
     const sheet = fiddler.getSheet()
     const columns = encryptColumns.map(e => e.columnName)
 
-    return fiddler.getRangeList(columns).getRanges()
+    const r = fiddler.getRangeList(columns).getRanges()
       .map((r, i) => sheet.getRange(r.getA1Notation().replace(/([^\d]+).*/, "$1:$1"))
         .addDeveloperMetadata(keys.encrypted, columns[i], visibility))
+    
+    return r
   }
 
   /**
@@ -274,9 +279,9 @@ class Crypter {
   _dump(clonable) {
     // make output fiddlers for all the clones
     for (const item of clonable.values()) {
-      item.cloneFiddler = bmPreFiddler.PreFiddler().getFiddler({ 
-        ...this.settings.clone, 
-        sheetName: item.cloneName 
+      item.cloneFiddler = bmPreFiddler.PreFiddler().getFiddler({
+        ...this.settings.clone,
+        sheetName: item.cloneName
       })
       // replace the clonefiddler data with the encrypted and dump
       item.cloneFiddler.setData(item.fiddler.getData()).dumpValues()
@@ -349,7 +354,11 @@ class Crypter {
  * @param {object} [param.metaDataSettings] keys for developer meta data - best to allow the defaults
  */
 var newCrypter = ({ settings, metaDataSettings }) => new Crypter({ settings, metaDataSettings })
-
+/**
+ * get a random string
+ * @returns {string}
+ */
+var randomString = Crypter.randomString
 
 
 
