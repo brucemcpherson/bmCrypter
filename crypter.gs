@@ -74,6 +74,7 @@ class Crypter {
     // these are the metadata access keys
     this._metaDataSettings = metaDataSettings || CrypterMeta.defaultMeta;
     this._spreadsheet = SpreadsheetApp.openById(this._settings.clone.id)
+    Trackmyself.stamp()
   }
   /**a
    * get encryption instructions
@@ -133,7 +134,7 @@ class Crypter {
       // clear the old stuff
       const { cloneFiddler } = item
       this._clearDeveloperData({ fiddler: cloneFiddler })
-      this._tagMetaData({fiddler: cloneFiddler,encryptColumns: item.encryptColumns})
+      this._tagMetaData({ fiddler: cloneFiddler, encryptColumns: item.encryptColumns })
     }
 
 
@@ -181,7 +182,7 @@ class Crypter {
     const r = fiddler.getRangeList(columns).getRanges()
       .map((r, i) => sheet.getRange(r.getA1Notation().replace(/([^\d]+).*/, "$1:$1"))
         .addDeveloperMetadata(keys.encrypted, columns[i], visibility))
-    
+
     return r
   }
 
@@ -201,7 +202,7 @@ class Crypter {
    * @return {DeveloperMetaData[]}
    */
   _findMetaData({ fiddler }) {
-    return CrypterMeta.findMetaData({ fiddler, metaDataSettings: this.metaDataSettings })
+    return CrypterMeta.findMetaData({ sheet: fiddler.getSheet(), metaDataSettings: this.metaDataSettings })
   }
 
   /**
