@@ -10,6 +10,7 @@ class Decrypter {
   constructor({ metaDataSettings } = {}) {
     // these are the metadata access keys
     this._metaDataSettings = metaDataSettings || CrypterMeta.defaultMeta;
+    Trackmyself.stamp()
   }
   /**
    * get encryption instructions
@@ -115,17 +116,30 @@ class Decrypter {
       return p;
     }, [])
   }
+
+  /**
+   * get column metadata and unravel
+   * @param {object} param
+   * @param {sheet} param.sheet the sheet to match against
+   * @param {boolean} param.complain whether to complain
+   * @returns {DeveloperMetadata[]} the results organized by column name
+  */
+  unraveller({ sheet, complain = true }) {
+    const metaDataSettings = this.metaDataSettings
+    const meta = CrypterMeta.findMetaData({ sheet, metaDataSettings })
+    if (complain &&  (!meta || !meta.length)) throw new Error('no meta data found for sheet ' + sheet.getName())
+    return (meta || []).map(m => CrypterMeta.unravelMeta(m))
+  }
+
+
   /**
    * get column metadata and unravel
    * @param {object} param
    * @param {Fiddler} param.fiddler the fiddler to match against
    * @returns {DeveloperMetadata[]} the results organized by column name
   */
-  _getUnravel({ fiddler }) {
-    const metaDataSettings = this.metaDataSettings
-    const meta = CrypterMeta.findMetaData({ fiddler, metaDataSettings })
-    if (!meta || !meta.length) throw new Error('no meta data found for sheet ' + fiddler.getSheet().getName())
-    return meta.map(m => CrypterMeta.unravelMeta(m))
+  getUnravel({ fiddler }) {
+    return this.unraveller({ sheet: fiddler.getSheet() })
   }
   /**
    * check that the location matches our expectation
@@ -143,9 +157,9 @@ class Decrypter {
     const fHeaders = fiddler.getHeaders()
     const fid = fSheet.getParent().getId()
 
-    // there has to be meta data
-    const unravelled = this._getUnravel({ fiddler })
-
+    // make the meta data more digestable
+    const unravelled = this.getUnravel({ fiddler })
+console.log(unravelled)
     // lets be very strict for now - it should not have moved or been changed in any way
     columnNames.forEach(name => {
       const fColumn = fHeaders.indexOf(name)
@@ -185,7 +199,15 @@ class Decrypter {
     return publicKeys[0].getValue()
   }
 
-
+  /**
+   * find column metadata
+   * @param {object} param
+   * @param {sheet} param.sheet the spreadsheet to match against
+   * @return {DeveloperMetaData[]}
+   */
+  findMeta({ sheet }) {
+    return CrypterMeta.findMetaData({ sheet, metaDataSettings: this.metaDataSettings })
+  }
 
 
   /**
@@ -195,10 +217,18 @@ class Decrypter {
    * @return {DeveloperMetaData[]}
    */
   _findMetaData({ fiddler }) {
-    const metaData = this.metaDataSettings
-    const { keys, visibility } = metaData
-    return this._getSpreadsheet({ fiddler }).createDeveloperMetadataFinder().withKey(keys.encrypted).withVisibility(visibility).find()
+    return this.findMeta({ sheet: fiddler.getSheet() })
   }
+
+  /**
+   * find spreadsheet metadata
+   * @param {object} param
+   * @return {DeveloperMetaData[]}
+   */
+  _findSpreadsheetMetaData() {
+    return CrypterMeta.findSpreadsheetMetaData({ spreadsheet: this._spreadsheet, metaDataSettings: this.metaDataSettings })
+  }
+
 
   /**
    * find spreadsheet metadata
