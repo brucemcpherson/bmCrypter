@@ -10,7 +10,10 @@ var GasCrypt = ((sc) => {
    * @param {string} passPhrase secret
    * @return {SimpleCrypto}
    */
-  const newCrypto = (passPhrase) => new sc.SimpleCrypto(passPhrase);
+  const newCrypto = (passPhrase) => {
+    Trackmyself.stamp()
+    return new sc.SimpleCrypto(passPhrase);
+  }
 
   /**
    * random string
