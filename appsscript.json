@@ -5,19 +5,19 @@
   "dependencies": {
     "libraries": [
       {
+        "userSymbol": "bmPreFiddler",
+        "libraryId": "13JUFGY18RHfjjuKmIRRfvmGlCYrEkEtN6uUm-iLUcxOUFRJD-WBX-tkR",
+        "version": "30"
+      },
+      {
         "userSymbol": "bmLibraryReporter",
         "libraryId": "1D_lWK-jU53wxMA2-NxSjiyu7Uze_GDDqBKTsQnCgPhyUmmSLv0bfTNPX",
-        "version": "8"
+        "version": "14"
       },
       {
         "userSymbol": "bmSimpleCrypto",
         "libraryId": "1-QSJlFRNb-6MhZe4zra6tbTTriX_IHbZ7X3nNoFfKtlkA3DrbY-Z-S4i",
-        "version": "2"
-      },
-      {
-        "userSymbol": "bmPreFiddler",
-        "libraryId": "13JUFGY18RHfjjuKmIRRfvmGlCYrEkEtN6uUm-iLUcxOUFRJD-WBX-tkR",
-        "version": "24"
+        "version": "5"
       }
     ]
   }
