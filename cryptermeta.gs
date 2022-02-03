@@ -3,13 +3,12 @@ var CrypterMeta = (() => {
   /**
    * find column metadata
    * @param {object} param
-   * @param {Fiddler} param.fiddler the fiddler to match against
+   * @param {sheet} param.sheet the sheet to match against
    * @param {object} param.metaDataSettings the meta data settings
    * @returns {DeveloperMetaData[]}
    */
-  const findMetaData = ({ fiddler, metaDataSettings }) => {
+  const findMetaData = ({ sheet, metaDataSettings }) => {
     const { keys, visibility } = metaDataSettings
-    const sheet = fiddler.getSheet()
     return sheet.createDeveloperMetadataFinder()
       .withKey(keys.encrypted)
       .withVisibility(visibility)
