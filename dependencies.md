@@ -1,5 +1,5 @@
 # Google Apps Script Project: bmCrypter
-This repo (bmCrypter) was automatically updated on 2/3/2022, 6:07:46 PM by GasGit
+This repo (bmCrypter) was automatically updated on 2/10/2022, 5:32:34 PM by GasGit
 
 For more information on gasgit, see the [desktop liberation site](https://ramblings.mcpher.com/drive-sdk-and-github/migrategasgit/ "desktop liberation")
 
@@ -24,14 +24,14 @@ exports| server_js
 ### Directly referenced libraries
 *library*|*identifier*|*key*|*version*|*dev mode*|*source*|
 --- | --- | --- | --- | --- | --- 
-bmPreFiddler| bmPreFiddler|13JUFGY18RHfjjuKmIRRfvmGlCYrEkEtN6uUm-iLUcxOUFRJD-WBX-tkR|30|no|[here](libraries/bmPreFiddler "library source")
+bmPreFiddler| bmPreFiddler|13JUFGY18RHfjjuKmIRRfvmGlCYrEkEtN6uUm-iLUcxOUFRJD-WBX-tkR|31|no|[here](libraries/bmPreFiddler "library source")
 bmLibraryReporter| bmLibraryReporter|1D_lWK-jU53wxMA2-NxSjiyu7Uze_GDDqBKTsQnCgPhyUmmSLv0bfTNPX|14|no|[here](libraries/bmLibraryReporter "library source")
 bmSimpleCrypto| bmSimpleCrypto|1-QSJlFRNb-6MhZe4zra6tbTTriX_IHbZ7X3nNoFfKtlkA3DrbY-Z-S4i|5|no|[here](libraries/bmSimpleCrypto "library source")
 ### All dependencies and sub dependencies
 *library*|*identifier*|*key*|*version*|*dev mode*|*source*|
 --- | --- | --- | --- | --- | --- 
-bmPreFiddler| bmPreFiddler|13JUFGY18RHfjjuKmIRRfvmGlCYrEkEtN6uUm-iLUcxOUFRJD-WBX-tkR|30|no|[here](libraries/bmPreFiddler "library source")
-bmFiddler| bmFiddler|13EWG4-lPrEf34itxQhAQ7b9JEbmCBfO8uE4Mhr99CHi3Pw65oxXtq-rU|25|no|[here](libraries/bmFiddler "library source")
+bmPreFiddler| bmPreFiddler|13JUFGY18RHfjjuKmIRRfvmGlCYrEkEtN6uUm-iLUcxOUFRJD-WBX-tkR|31|no|[here](libraries/bmPreFiddler "library source")
+bmFiddler| bmFiddler|13EWG4-lPrEf34itxQhAQ7b9JEbmCBfO8uE4Mhr99CHi3Pw65oxXtq-rU|26|no|[here](libraries/bmFiddler "library source")
 bmLibraryReporter| bmLibraryReporter|1D_lWK-jU53wxMA2-NxSjiyu7Uze_GDDqBKTsQnCgPhyUmmSLv0bfTNPX|0|no|[here](libraries/bmLibraryReporter "library source")
 bmLibraryTracking| bmLibraryTracking|1GIpX-loeYv2swfT2mcYCUvduAXtoYdzenzIYXt4M_1YLmlN7eMrO1h_P|7|no|[here](libraries/bmLibraryTracking "library source")
 bmSimpleCrypto| bmSimpleCrypto|1-QSJlFRNb-6MhZe4zra6tbTTriX_IHbZ7X3nNoFfKtlkA3DrbY-Z-S4i|5|no|[here](libraries/bmSimpleCrypto "library source")
