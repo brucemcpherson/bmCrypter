@@ -66,9 +66,11 @@ var CrypterMeta = (() => {
       return r;
     })
   }
+  const findMetaDataById = ({metaDataId, sheet}) => {
+    return sheet.createDeveloperMetadataFinder().withId(metaDataId).find() 
+  }
 
   const unravelMeta = (meta) => {
-
     const location = meta.getLocation()
     const id = meta.getId()
     const value = meta.getValue()
@@ -110,6 +112,7 @@ var CrypterMeta = (() => {
     encrypt,
     decrypt,
     findSpreadsheetMetaData,
+    findMetaDataById,
     findMetaData,
     defaultMeta: ({
       keys: {
