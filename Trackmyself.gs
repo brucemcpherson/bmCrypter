@@ -12,7 +12,7 @@ var Trackmyself = ((trackingOptions) => {
   
 })({
   name: 'bmCrypter',
-  version: '8',
+  version: '10',
   failSilently: true,
   singleStamp: true
 })
