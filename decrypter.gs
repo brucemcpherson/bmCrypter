@@ -90,28 +90,20 @@ class Decrypter {
     for (const spreadsheet of decorated.values()) {
       for (const sheetName of spreadsheet.values()) {
         const { columns, fiddler } = sheetName
-        const headers = fiddler.getHeaders()
-        const columnNames = columns.map(f => f.item.columnName)
-        const unravelled = this._validateLocations({ fiddler, columnNames })
 
-        // need this potentially - for moving meta data
-        const custom = []
         // now we can decrypt and enhance the fiddler
         // only decrypt those in the  that exist in the sheet
         columns
-          .filter((column) => headers.indexOf(column.item.columnName) !== -1)
+          .filter((column) => fiddler.getHeaders().indexOf(column.item.columnName) !== -1)
           .forEach((column) => {
-            const {item} = column
+            const { item } = column
             const { privateKey, columnName } = item
             const { publicKey } = column
             const decryptName = columnName + "_decrypted"
             // if the decrypted version of the column doesnt exist, insert it
-            if (headers.indexOf(decryptName) === -1) {
+            if (fiddler.getHeaders().indexOf(decryptName) === -1) {
               fiddler.insertColumn(decryptName, columnName)
             }
-            custom.push ({
-              unravelled: unravelled.find(g=>g.value === columnName)
-            })
             // now the decryption
             // after this the fiddler will contain the decrypted version of all the encrypted columns we know the key for
             fiddler.mapRows(row => {
@@ -119,18 +111,14 @@ class Decrypter {
                 row[decryptName] = this._decrypt({ publicKey, privateKey, item: row[columnName] })
               } catch (err) {
                 console.log(privateKey)
-                throw new Error('Something went wrong decrypting column ' + columnName + ' ' + err.toString())
+                throw new Error('Do you have correct private key for ' + columnName + '? :' + err.toString())
               }
               return row
             })
+            if (removeEncrypted) {
+              fiddler.filterColumns(name => name !== columnName)
+            }
           })
-        // remove the columns that were encrypted
-        if (removeEncrypted) {
-          const removedColumns = fiddler.getHeaders().filter(columnName => unravelled.find(f => f.value === columnName))
-          fiddler.filterColumns(columnName => removedColumns.indexOf(columnName) === -1)
-        }
-        // remember what weve done
-        fiddler.setCustom(custom)
 
       }
     }
@@ -141,7 +129,7 @@ class Decrypter {
       }
       return p;
     }, [])
-  
+
     return fiddlers
 
   }
@@ -153,7 +141,7 @@ class Decrypter {
    * @param {boolean} param.complain whether to complain
    * @returns {DeveloperMetadata[]} the meta data
   */
-  findSheetMeta ({ sheet, complain = true }) {
+  findSheetMeta({ sheet, complain = true }) {
     const metaDataSettings = this.metaDataSettings
     const meta = CrypterMeta.findMetaData({ sheet, metaDataSettings })
     if (complain && (!meta || !meta.length)) throw new Error('no meta data found for sheet ' + sheet.getName())
@@ -168,17 +156,17 @@ class Decrypter {
    * @returns {Object[]} the results organized by column name
   */
   unraveller({ sheet, complain = true }) {
-    const result = this.getSheetMeta ({sheet,complain})
-    return result && result.map(f=>f.unravelled)
+    const result = this.getSheetMeta({ sheet, complain })
+    return result && result.map(f => f.unravelled)
   }
 
-  unravelMeta (meta){
+  unravelMeta(meta) {
     return CrypterMeta.unravelMeta(meta)
   }
 
-  getSheetMeta ({sheet, complain = true}) {
-    const metaData = this.findSheetMeta ({sheet, complain})
-    return metaData.map(f=>({
+  getSheetMeta({ sheet, complain = true }) {
+    const metaData = this.findSheetMeta({ sheet, complain })
+    return metaData.map(f => ({
       unravelled: this.unravelMeta(f),
       metaData: f
     }))
@@ -250,7 +238,7 @@ class Decrypter {
     return publicKeys[0].getValue()
   }
 
-  findMetaById ({sheet, metaDataId}) {
+  findMetaById({ sheet, metaDataId }) {
     return CrypterMeta.findMetaDataById({ sheet, metaDataId })
   }
   /**
@@ -287,6 +275,7 @@ class Decrypter {
   /**
    * find spreadsheet metadata
    * @param {object} param
+   * @param {Fiddler} param.fiddler the fiddler containing the sheet that we need spreadsheetmetadata for
    * @return {DeveloperMetaData[]}
    */
   _findSpreadsheetMetaData({ fiddler }) {
@@ -295,6 +284,36 @@ class Decrypter {
     return this._getSpreadsheet({ fiddler }).createDeveloperMetadataFinder().withKey(keys.public).withVisibility(visibility).find()
   }
 
+  /**
+   * repair spreadsheet metadata for rearranged data
+   * @param {object} param
+   * @param {Fiddler} param.fiddler the fiddler containing the sheet that we need to repair 
+   * @return {DeveloperMetaData[]}
+   */
+  repairMetaData({ fiddler }) {
+
+    const sheet = fiddler.getSheet()
+    const headers = fiddler.getHeaders()
+
+
+    // all the meta in this sheet
+    this.getSheetMeta({ sheet, complain: true })
+
+      // move it or remove it
+      .forEach(g => {
+        // sort out 
+        const { unravelled, metaData } = g
+        const columnNumber = headers.indexOf(unravelled.value)
+        // if it exists move it there
+        if (columnNumber !== -1) {
+          const s = sheet.getRange(`A1`).offset(0, columnNumber, 1, 1).getA1Notation().replace(/\d+/, '')
+          metaData.moveToColumn(sheet.getRange(`${s}:${s}`))
+        } else {
+          // otherwise delete it
+          metaData.remove()
+        }
+      })
+  }
 
 }
 
